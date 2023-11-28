@@ -7,7 +7,7 @@ WIDTH, HEIGHT = 1600, 900
 
 PLAY, GAMEOVER = (0, 1)
 
-delta = {
+delta = {  #練習3:押下キーと移動量の辞書
     pg.K_UP:(0, -5),
     pg.K_DOWN: (0, +5),
     pg.K_LEFT: (-5, 0),
@@ -17,9 +17,9 @@ delta = {
 
 def check_bound(rct:pg.Rect) -> tuple[bool, bool]:
     yoko, tate = True, True
-    if rct.left < 0 or WIDTH < rct.right:
+    if rct.left < 0 or WIDTH < rct.right:  #横方向はみ出し判定
         yoko = False
-    if rct.top < 0 or HEIGHT < rct.bottom:
+    if rct.top < 0 or HEIGHT < rct.bottom:  #縦方向はみ出し判定
         tate = False
     return yoko, tate
 
@@ -33,16 +33,16 @@ def main():
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
     kk_imgGO = pg.image.load("ex02/fig/8.png")
     kk_imgGO = pg.transform.rotozoom(kk_imgGO, 0, 2.0)
-    bomb_img = pg.image.load("ex02/fig/bakuhatsu2.png")
-    kk_rct = kk_img.get_rect()
-    kk_rct.center = 900, 400
+    #bomb_img = pg.image.load("ex02/fig/bakuhatsu2.png")
+    kk_rct = kk_img.get_rect()  #練習3:こうかとんSurfaceのRecrを検出する
+    kk_rct.center = 900, 400  #練習3:こうかとんの初期座標
     bb_img = pg.Surface((20, 20))  # 練習1：透明のSruface
     bb_img.set_colorkey((0, 0, 0))
     pg.draw.circle(bb_img,(255, 0, 0), (10, 10), 10)
     bb_rct = bb_img.get_rect()
     bb_rct.centerx = random.randint(0, WIDTH)
     bb_rct.centery = random.randint(0, HEIGHT)
-    vx, vy = +5, +5
+    vx, vy = +5, +5  #練習2:爆弾の速度
 
     clock = pg.time.Clock()
     tmr = 0
@@ -53,11 +53,11 @@ def main():
             if event.type == pg.QUIT: 
                 return
             
-        if kk_rct.colliderect(bb_rct):
+        if kk_rct.colliderect(bb_rct):  #GAMEOVER時の処理
                 print("Game Over")
                 kk_rct = kk_img.get_rect()
-                pg.game_state = GAMEOVER
-                if event.key == pg.K_SPACE:
+                pg.game_state = GAMEOVER  #GAMEOVERの状態登録
+                if event.key == pg.K_SPACE:  #スペースキーを押したと初期画面に戻る
                     pg.game_state == PLAY
 
         
@@ -65,7 +65,7 @@ def main():
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
         for k, tpl in delta.items():
-            if key_lst[k]:
+            if key_lst[k]:  #キーが押されたら
                 sum_mv[0] += tpl[0]
                 sum_mv[1] += tpl[1]
 
@@ -73,12 +73,12 @@ def main():
         kk_rct.move_ip(sum_mv[0], sum_mv[1])
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
-        screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx, vy)
+        screen.blit(kk_img, kk_rct)  #練習3:こうかとんを移動させる
+        bb_rct.move_ip(vx, vy)  #練習2:爆弾を移動させる
         yoko, tate = check_bound(bb_rct)
-        if not yoko:
+        if not yoko:  #横方向にはみ出たら
             vx *= -1
-        if not tate:
+        if not tate:  #縦方向にはみ出たら
             vy *= -1
         bb_rct.move_ip(vx, vy)
         screen.blit(bb_img, bb_rct)
