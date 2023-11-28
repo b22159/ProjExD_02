@@ -5,12 +5,15 @@ import random
 
 WIDTH, HEIGHT = 1600, 900
 
+PLAY, GAMEOVER = (0, 1)
+
 delta = {
     pg.K_UP:(0, -5),
     pg.K_DOWN: (0, +5),
     pg.K_LEFT: (-5, 0),
     pg.K_RIGHT: (+5, 0)
 }
+
 
 def check_bound(rct:pg.Rect) -> tuple[bool, bool]:
     yoko, tate = True, True
@@ -20,12 +23,17 @@ def check_bound(rct:pg.Rect) -> tuple[bool, bool]:
         tate = False
     return yoko, tate
 
+pg.game_state = PLAY
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
+    kk_imgGO = pg.image.load("ex02/fig/8.png")
+    kk_imgGO = pg.transform.rotozoom(kk_imgGO, 0, 2.0)
+    bomb_img = pg.image.load("ex02/fig/bakuhatsu2.png")
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
     bb_img = pg.Surface((20, 20))  # 練習1：透明のSruface
@@ -38,6 +46,7 @@ def main():
 
     clock = pg.time.Clock()
     tmr = 0
+   
 
     while True:
         for event in pg.event.get():
@@ -46,8 +55,13 @@ def main():
             
         if kk_rct.colliderect(bb_rct):
                 print("Game Over")
-                return
-            
+                kk_rct = kk_img.get_rect()
+                pg.game_state = GAMEOVER
+                if event.key == pg.K_SPACE:
+                    pg.game_state == PLAY
+
+        
+        
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
         for k, tpl in delta.items():
