@@ -3,7 +3,7 @@ import pygame as pg
 import random
 
 
-WIDTH, HEIGHT = 1600, 900
+WIDTH, HEIGHT = 160, 90
 
 
 def main():
